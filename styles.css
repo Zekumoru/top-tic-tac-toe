@@ -75,8 +75,8 @@ button:hover {
   background-color: transparent;
   border-radius: 8px;
   border: none;
-  font-size: 10rem;
-  line-height: 11rem;
+  font-size: min(100px, 16vw);
+  line-height: min(110px, 18vw);
   cursor: pointer;
 }
 
