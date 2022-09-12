@@ -43,6 +43,13 @@ const game = (() => {
 const displayController = (() => {
   const board = [];
 
+  document.querySelector('button.reset').addEventListener('click', () => {
+    board.forEach((tile) => {
+      tile.textContent = '';
+      tile.disabled = false;
+    });
+  });
+
   document.querySelectorAll('.tile button').forEach((tile) => {
     board[tile.dataset.index] = tile;
     tile.addEventListener('click', () => {
