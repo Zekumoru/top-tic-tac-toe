@@ -58,6 +58,7 @@ const playerOne = Player.create('Player 1', 'X');
 const playerTwo = Player.create('Player 2', 'O');
 
 const game = (() => {
+  const board = GameBoard.create();
   let activePlayer = playerOne;
 
   function getActivePlayer() {
@@ -65,7 +66,9 @@ const game = (() => {
   }
 
   function mark(tile) {
-
+    board.mark(activePlayer.mark, tile);
+    activePlayer = (activePlayer === playerOne)? playerTwo : playerOne;
+    console.log(board.tiles);
   }
 
   return {
@@ -90,8 +93,8 @@ const displayController = (() => {
     tile.addEventListener('click', () => {
       tile.disabled = true;
 
-      game.mark(tile.dataset.index);
       tile.textContent = game.getActivePlayer().mark;
+      game.mark(tile.dataset.index);
     });
   });
 })();
