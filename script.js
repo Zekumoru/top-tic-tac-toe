@@ -57,26 +57,33 @@ const GameBoard = (() => {
 const playerOne = Player.create('Player 1', 'X');
 const playerTwo = Player.create('Player 2', 'O');
 
-const game = (() => {
-  const board = GameBoard.create();
-  let activePlayer = playerOne;
+const Game = (() => {
+  function create() {
+    const board = GameBoard.create();
+    let activePlayer = playerOne;
+  
+    function getActivePlayer() {
+      return activePlayer;
+    }
+  
+    function mark(tile) {
+      board.mark(activePlayer.mark, tile);
+      activePlayer = (activePlayer === playerOne)? playerTwo : playerOne;
+      console.log(board.tiles);
+    }
 
-  function getActivePlayer() {
-    return activePlayer;
-  }
-
-  function mark(tile) {
-    board.mark(activePlayer.mark, tile);
-    activePlayer = (activePlayer === playerOne)? playerTwo : playerOne;
-    console.log(board.tiles);
+    return {
+      getActivePlayer,
+      mark,
+    };
   }
 
   return {
-    getActivePlayer,
-    mark,
+    create,
   };
 })();
 
+const game = Game.create();
 
 const displayController = (() => {
   const board = [];
