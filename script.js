@@ -61,6 +61,7 @@ const Game = (() => {
   function create(game) {
     const board = GameBoard.create(game? game.getGameBoard().tiles : []);
     let activePlayer = game? game.getActivePlayer() : playerOne;
+    let winner;
   
     function getGameBoard(){
       return board;
@@ -69,16 +70,35 @@ const Game = (() => {
     function getActivePlayer() {
       return activePlayer;
     }
+
+    function getWinner() {
+      return winner;
+    }
   
     function mark(tile) {
+      if (winner) return;
+
       board.mark(activePlayer.mark, tile);
       activePlayer = (activePlayer === playerOne)? playerTwo : playerOne;
       console.log(board.tiles);
+      return win();
+    }
+
+    function win() {
+      if (winner) return;
+
+      winner = board.win();
+      if (!winner) return;
+
+      if (winner === playerOne.mark) return winner = playerOne;
+      return winner = playerTwo;
     }
 
     return {
+      get isOver() { return !!winner; },
       getActivePlayer,
       getGameBoard,
+      getWinner,
       mark,
     };
   }
@@ -104,9 +124,14 @@ const displayController = (() => {
     board[tile.dataset.index] = tile;
     tile.addEventListener('click', () => {
       tile.disabled = true;
-
       tile.textContent = game.getActivePlayer().mark;
       game.mark(tile.dataset.index);
+
+      if (game.isOver) disable();
     });
   });
+
+  function disable() {
+    board.forEach((tile) => tile.disabled = true);
+  }
 })();
