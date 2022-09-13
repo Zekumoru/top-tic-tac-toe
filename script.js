@@ -16,7 +16,37 @@ const GameBoard = (() => {
   const Length = 9;
 
   function create(tiles = []) {
-    
+    function mark(symbol, position) {
+      if (position < 0 || position >= Length) return false;
+
+      tiles[position] = symbol;
+      return true;
+    }
+
+    function clear() {
+      tiles.length = 0;
+    }
+
+    // Returns the symbol of the winning player
+    function win() {
+      for (let i = 0, j = 0; i <= 2; i++, j += 3) {
+        if (tiles[i] === tiles[i + 3] && tiles[i + 3] === tiles[i + 6] && tiles[i] && tiles[i + 3] && tiles[i + 6]) return tiles[i];
+        if (tiles[j] === tiles[j + 1] && tiles[j + 1] === tiles[j + 2] && tiles[j] && tiles[j + 1] && tiles[j + 2]) return tiles[j];
+      }
+      for (let i = 0, j = 8; i < 3; i++, j--) {
+        if (i === 1) continue;
+        if (!tiles[i] || !tiles[4] || !tiles[j]) continue;
+        if (tiles[i] === tiles[4] && tiles[4] === tiles[j]) return tiles[4];
+      }
+    }
+
+    return {
+      get Length() { return Length; },
+      get tiles() { return tiles.slice(); },
+      mark,
+      clear, 
+      win,
+    };
   }
 
   return {
@@ -34,8 +64,13 @@ const game = (() => {
     return activePlayer;
   }
 
+  function mark(tile) {
+
+  }
+
   return {
     getActivePlayer,
+    mark,
   };
 })();
 
@@ -54,6 +89,8 @@ const displayController = (() => {
     board[tile.dataset.index] = tile;
     tile.addEventListener('click', () => {
       tile.disabled = true;
+
+      game.mark(tile.dataset.index);
       tile.textContent = game.getActivePlayer().mark;
     });
   });
