@@ -175,6 +175,11 @@ const displayController = (() => {
 
   function overGame() {
     disable();
+
+    let title = "Game is draw!"
+    if (game.getWinner()) title = game.getWinner().name + ' won!';
+
+    dialogController.show(title, reset);
   }
 
   function reset() {
