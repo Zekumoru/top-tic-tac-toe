@@ -84,6 +84,12 @@ const Game = (() => {
       return win();
     }
 
+    function reset() {
+      board.clear();
+      winner = null;
+      activePlayer = playerOne;
+    }
+
     function win() {
       if (winner) return;
 
@@ -99,6 +105,7 @@ const Game = (() => {
       getActivePlayer,
       getGameBoard,
       getWinner,
+      reset,
       mark,
     };
   }
@@ -117,6 +124,7 @@ const displayController = (() => {
     board.forEach((tile) => {
       tile.textContent = '';
       tile.disabled = false;
+      game.reset();
     });
   });
 
