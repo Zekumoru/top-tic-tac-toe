@@ -40,9 +40,16 @@ const GameBoard = (() => {
       }
     }
 
+    function getTilesLeft() {
+      const tilesLeft = [];
+      for (let i = 0; i < Length; i++) if (!tiles[i]) tilesLeft.push(i);
+      return tilesLeft;
+    }
+
     return {
       get Length() { return Length; },
       get tiles() { return tiles.slice(); },
+      getTilesLeft,
       mark,
       clear, 
       win,
@@ -101,7 +108,7 @@ const Game = (() => {
     }
 
     return {
-      get isOver() { return !!winner; },
+      get isOver() { return !!winner || !board.getTilesLeft().length; },
       getActivePlayer,
       getGameBoard,
       getWinner,
@@ -167,7 +174,7 @@ const displayController = (() => {
   });
 
   function overGame() {
-
+    disable();
   }
 
   function reset() {
