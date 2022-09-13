@@ -58,10 +58,14 @@ const playerOne = Player.create('Player 1', 'X');
 const playerTwo = Player.create('Player 2', 'O');
 
 const Game = (() => {
-  function create() {
-    const board = GameBoard.create();
-    let activePlayer = playerOne;
+  function create(game) {
+    const board = GameBoard.create(game? game.getGameBoard().tiles : []);
+    let activePlayer = game? game.getActivePlayer() : playerOne;
   
+    function getGameBoard(){
+      return board;
+    }
+
     function getActivePlayer() {
       return activePlayer;
     }
@@ -74,6 +78,7 @@ const Game = (() => {
 
     return {
       getActivePlayer,
+      getGameBoard,
       mark,
     };
   }
