@@ -1,4 +1,6 @@
 
+let aiEnabled = true;
+
 const Player = (() => {
   function create(name, mark) {
     return {
@@ -87,7 +89,6 @@ const Game = (() => {
 
       board.mark(activePlayer.mark, tile);
       activePlayer = (activePlayer === playerOne)? playerTwo : playerOne;
-      console.log(board.tiles);
       return win();
     }
 
@@ -123,6 +124,55 @@ const Game = (() => {
 })();
 
 const game = Game.create();
+
+const minimax = ((player, opponent) => {
+  const BaseScore = 10;
+  let choice;
+
+  function score(game, depth) {
+    if (game.getWinner() === player) return BaseScore - depth;
+    if (game.getWinner() === opponent) return depth - BaseScore;
+    return 0;
+  }
+
+  function eval(game, depth = 0) {
+    if (game.isOver) return score(game, depth);
+
+    const scores = [];
+    const tiles = [];
+    depth += 1;
+
+    game.getGameBoard().getTilesLeft().forEach((tile) => {
+      const possibleGame = Game.create(game);
+      possibleGame.mark(tile);
+      scores.push(eval(possibleGame, depth));
+      tiles.push(tile);
+    });
+
+    if (game.getActivePlayer() === player) {
+      const maxIndex = scores.reduce((maxIndex, currentScore, index) => {
+        if (currentScore > scores[maxIndex]) return index;
+        return maxIndex;
+      }, 0);
+
+      choice = tiles[maxIndex];
+      return scores[maxIndex];
+    }
+
+    const minIndex = scores.reduce((minIndex, currentScore, index) => {
+      if (currentScore < scores[minIndex]) return index;
+      return minIndex;
+    }, 0);
+
+    choice = tiles[minIndex];
+    return scores[minIndex];
+  }
+
+  return {
+    get choice() { return choice; },
+    eval,
+  }
+})(playerTwo, playerOne);
 
 const dialogController = (() => {
   const dialog = document.querySelector('.dialog');
@@ -170,6 +220,11 @@ const displayController = (() => {
       game.mark(tile.dataset.index);
 
       if (game.isOver) overGame();
+
+      if (aiEnabled && game.getActivePlayer() === playerTwo) {
+        board[getAIMove()].click();
+        return;
+      }
     });
   });
 
@@ -194,3 +249,8 @@ const displayController = (() => {
     board.forEach((tile) => tile.disabled = true);
   }
 })();
+
+function getAIMove() {
+  minimax.eval(game);
+  return minimax.choice;
+}
