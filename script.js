@@ -117,16 +117,43 @@ const Game = (() => {
 
 const game = Game.create();
 
+const dialogController = (() => {
+  const dialog = document.querySelector('.dialog');
+  const title = dialog.querySelector('.title');
+  const button = dialog.querySelector('button.prompt');
+
+  let onClickButton = null;
+
+  button.addEventListener('click', click);
+
+  function show(titleText, onClick) {
+    title.textContent = titleText;
+    onClickButton = onClick;
+    dialog.style.visibility = 'visible';
+  }
+
+  function hide() {
+    dialog.style.visibility = 'hidden';
+    onClickButton = null;
+  }
+
+  function click() {
+    if (!onClickButton) return;
+    onClickButton();
+    hide();
+  }
+
+  return {
+    show,
+    hide,
+    click,
+  };
+})();
+
 const displayController = (() => {
   const board = [];
 
-  document.querySelector('button.reset').addEventListener('click', () => {
-    board.forEach((tile) => {
-      tile.textContent = '';
-      tile.disabled = false;
-      game.reset();
-    });
-  });
+  document.querySelector('button.reset').addEventListener('click', reset);
 
   document.querySelectorAll('.tile button').forEach((tile) => {
     board[tile.dataset.index] = tile;
@@ -135,9 +162,21 @@ const displayController = (() => {
       tile.textContent = game.getActivePlayer().mark;
       game.mark(tile.dataset.index);
 
-      if (game.isOver) disable();
+      if (game.isOver) overGame();
     });
   });
+
+  function overGame() {
+
+  }
+
+  function reset() {
+    board.forEach((tile) => {
+      tile.textContent = '';
+      tile.disabled = false;
+      game.reset();
+    });
+  }
 
   function disable() {
     board.forEach((tile) => tile.disabled = true);
